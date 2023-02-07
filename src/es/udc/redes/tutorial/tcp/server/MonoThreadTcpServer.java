@@ -13,32 +13,52 @@ public class MonoThreadTcpServer {
             System.err.println("Format: es.udc.redes.tutorial.tcp.server.MonoThreadTcpServer <port>");
             System.exit(-1);
         }
+        
+        int port = Integer.parseInt(argv[0]);
+        ServerSocket serverSocket = null;
+
         try {
-            // Create a server socket
-            
-            // Set a timeout of 300 secs
+            // create socket
+            serverSocket = new ServerSocket(port);
+            serverSocket.setSoTimeout(300000);
             
             while (true) {
-                // Wait for connections
-                
-                // Set the input channel
-                
-                // Set the output channel
-                
-                // Receive the client message
-                
-                // Send response to the client
 
-                // Close the streams
+                // initial values
+                Socket socket = serverSocket.accept();
+                InputStream input = socket.getInputStream();
+                OutputStream output = socket.getOutputStream();
+
+                // recieve message
+                BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+                String line = reader.readLine();
+                System.out.println("SERVER: Received " + line
+                    + " from " + socket.getInetAddress().toString()
+                    + ":" + socket.getPort());
+
+                // answer
+                PrintWriter writer = new PrintWriter(output, true);
+                writer.println(line);
+                System.out.println("SERVER: Sending " + line +
+                    " to " + socket.getInetAddress().toString() +
+                    ":" + socket.getPort());
+
+                socket.close();
             }
-        // Uncomment next catch clause after implementing the logic            
-        //} catch (SocketTimeoutException e) {
-        //    System.err.println("Nothing received in 300 secs ");
-        } catch (Exception e) {
+        }
+        catch (SocketTimeoutException e) {
+            System.err.println("Nothing received in 300 secs ");
+        }
+        catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
-        } finally {
-	        //Close the socket
+        }
+        finally {
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
