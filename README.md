@@ -42,7 +42,33 @@ the first practical aims to some basic concepts, specifically, we are asked to i
     CLIENT: recieved testing my udp server from /127.0.0.1:5000
     ```
 
-- tcp echo server
+- implement a multithreaded tcp echo server on `es.udc.redes.tutorial.tcp.serverr.TcpServer.java`
+    to make this exercise easier, first a monothread version of the server will be implemented:
+    - create a `serverSocket`
+    - set a maximum timeout
+    - create an infinite loop executing the following steps:
+        - invoke the `accept()` method of the server socket
+        - set input & output streams for the new socket
+        - revieve the message from client
+        - send the message to client
+        . close the streams & connection associated to the socket created in the `accept()` method
+    once this version is implemented, it can be checked as follows:
+    `java es.udc.redes.tutorial.tcp.server.MonoThreadTcpServer 5000`
+    the server will wait for incoming requests so from another terminal:
+    `java es.udc.redes.tutorial.tcp.client.TcpClient localhost 5000 "testing my tcp server"`
+    the following messages should be shown
+        the following messages should appear:
+    - on server terminal:
+    ```
+    SERVER: received testing my tcp server from /127.0.0.1:ABCDEF
+    SERVER: sending testing my tcp server to /127.0.0.1:ABCDEF
+    ```
+    - on client terminal
+    ```
+    CLIENT: sending testing my tcp server to localhost/127.0.0.1:5000
+    CLIENT: recieved testing my tcp server from /127.0.0.1:5000
+    ```
+
 ### p1 - web server
 we are asked to develop a basic java web server capable of interacting with a web browser to navigate through a web site
 
