@@ -68,6 +68,23 @@ the first practical aims to some basic concepts, specifically, we are asked to i
     CLIENT: sending testing my tcp server to localhost/127.0.0.1:5000
     CLIENT: recieved testing my tcp server from /127.0.0.1:5000
     ```
+    to implement the multithread server, implement a new class `ServerThread` tht extends `Thread`, this class will be in charge of processing each connection request like:
+    - create a ServerSocket associated to a port number
+    - set timeout
+    - infinite loop that executes:
+        - invoke the `accept()` method that will create the communication socket
+        - create a new `ServerThread` passing the new socket as a parameter
+        - start execution of the thread using `start()`
+    once the multithread server is implemented, it can be checked by executing:
+    `java es.udc.redes.tutorial.tcp.server.MonoThreadTcpServer 5000`
+    in another terminal run:
+    `nc loclahost 5000`
+    and then, on another one:
+    `java es.udc.redes.tutorial.tcp.client.TcpClient localhost 5000 "testing my tcp server"`
+    the following should happen:
+    - the server receives the message from the client
+    - it responds to the client with the same message
+    - the client receives the serverr response, just like the monothread server
 
 ### p1 - web server
 we are asked to develop a basic java web server capable of interacting with a web browser to navigate through a web site
