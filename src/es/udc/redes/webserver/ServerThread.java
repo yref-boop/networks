@@ -53,7 +53,7 @@ public class ServerThread extends Thread {
                 BODY =  "<html>\n\t<head>\n\t\t<title>\n\t\t\tERROR 404\n\t\t</title>\n\t</head>\n\t<body>\n\t\t<p>ERROR 404</p>\n\t</boddy>\n</html>";
             } else {
                 STATUS_LINE = "HTTP/1.0 200 OK";
-                HEADER_LINE = "Date: " + date + server + "\nContentLength: " + file.length() + "\nContentType: TODO" + "\nLast-Modified: " + date_format.format(modified);
+                HEADER_LINE = "Date: " + date + server + "\nContentLength: " + file.length() + "\nContentType: " + contentType(file_name) + "\nLast-Modified: " + date_format.format(modified);
                 HEADER_LINE = "Date: " + date;
             }
             printer.println (STATUS_LINE);
@@ -81,5 +81,17 @@ public class ServerThread extends Thread {
                 e.printStackTrace();
             }
         }
+    }
+    private String contentType (String file) {
+        if (file.endsWith (".html"))
+            return ("text/html");
+        else if (file.endsWith (".txt"))
+            return ("text/plain");
+        else if (file.endsWith (".gif"))
+            return ("image/gif");
+        else if (file.endsWith (".png"))
+            return ("image/png");
+        else
+            return ("application/octet-stream");
     }
 }
