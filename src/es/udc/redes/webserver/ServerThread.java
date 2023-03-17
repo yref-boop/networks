@@ -114,6 +114,8 @@ public class ServerThread extends Thread {
             FileInputStream input_stream = new FileInputStream (file.toString());
             OutputStream client_output = socket.getOutputStream();
 
+            client_output.write (("HTTP/1.0 400 Bad Request\r\n").getBytes());
+
             write_contents (file, client_output);
 
             int c;
@@ -160,8 +162,6 @@ public class ServerThread extends Thread {
         content_type (file, output);
         output.write (("Last-Modified:" + modification_date +"\r\n").getBytes());
         output.write (("\r\n").getBytes());
-
     }
-
 }
 
