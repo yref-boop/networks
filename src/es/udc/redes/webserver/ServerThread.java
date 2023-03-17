@@ -31,16 +31,7 @@ public class ServerThread extends Thread {
                 OutputStream client_output = socket.getOutputStream();
                 client_output.write (("HTTP/1.0 404 Not Found\r\n").getBytes());
 
-                DateFormat date_format = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z",Locale.ENGLISH);
-                String date = date_format.format(new Date());
-                String modification_date = date_format.format(file.lastModified());
-
-                client_output.write (("Date: " + date + "\r\n").getBytes());
-                client_output.write (("Server: web_server\r\n").getBytes());
-                client_output.write (("Content-Length: " + file.length()+"\r\n").getBytes());
-                content_type (file, client_output);
-                client_output.write (("Last-Modified:" + modification_date +"\r\n").getBytes());
-                client_output.write (("\r\n").getBytes());
+                write_contents (file, client_output);
 
                 if (!message_parts[0].equals ("HEAD")) {
                     int c;
@@ -77,16 +68,7 @@ public class ServerThread extends Thread {
                 else
                     client_output.write (("HTTP/1.0 200 OK\r\n").getBytes());
 
-                DateFormat date_format = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z",Locale.ENGLISH);
-                String date = date_format.format(new Date());
-                String modification_date = date_format.format(file.lastModified());
-
-                client_output.write (("Date: " + date + "\r\n").getBytes());
-                client_output.write (("Server: web_server\r\n").getBytes());
-                client_output.write (("Content-Length: " + file.length()+"\r\n").getBytes());
-                content_type (file, client_output);
-                client_output.write (("Last-Modified:" + modification_date +"\r\n").getBytes());
-                client_output.write (("\r\n").getBytes());
+                write_contents (file, client_output);
 
                 if (isModifiedSince) {
                     int c;
@@ -121,16 +103,7 @@ public class ServerThread extends Thread {
                 else
                     client_output.write(("HTTP/1.0 200 OK\r\n").getBytes());
 
-                DateFormat date_format = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z",Locale.ENGLISH);
-                String date = date_format.format(new Date());
-                String modification_date = date_format.format(file.lastModified());
-
-                client_output.write (("Date: " + date + "\r\n").getBytes());
-                client_output.write (("Server: web_server\r\n").getBytes());
-                client_output.write (("Content-Length: " + file.length()+"\r\n").getBytes());
-                content_type (file, client_output);
-                client_output.write (("Last-Modified:" + modification_date +"\r\n").getBytes());
-                client_output.write (("\r\n").getBytes());
+                write_contents (file, client_output);
 
                 client_output.flush();
                 client_output.close();
@@ -141,17 +114,7 @@ public class ServerThread extends Thread {
             FileInputStream input_stream = new FileInputStream (file.toString());
             OutputStream client_output = socket.getOutputStream();
 
-            DateFormat date_format = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z",Locale.ENGLISH);
-            String date = date_format.format(new Date());
-            String modification_date = date_format.format(file.lastModified());
-
-            client_output.write(("HTTP/1.0 400 Bad Request\r\n").getBytes());
-            client_output.write (("Date: " + date+ "\r\n").getBytes());
-            client_output.write (("Server: web_server\r\n").getBytes());
-            client_output.write (("Content-Length: " + file.length()+"\r\n").getBytes());
-            content_type (file, client_output);
-            client_output.write (("Last-Modified:" + modification_date +"\r\n").getBytes());
-            client_output.write (("\r\n").getBytes());
+            write_contents (file, client_output);
 
             int c;
             while ((c = input_stream.read()) != -1)
@@ -159,21 +122,22 @@ public class ServerThread extends Thread {
             client_output.flush();
             client_output.close();
 
-        } catch (SocketTimeoutException e) {
+        } catch (SocketTimeoutException exception) {
             System.err.println("Nothing received in 300 secs");
-        } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
+        } catch (Exception exception) {
+            System.err.println("Error: " + exception.getMessage());
         }
         finally {
             try {
                 socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException exception) {
+                exception.printStackTrace();
             }
         }
     }
 
     public void content_type(File file,OutputStream output) throws IOException {
+
         String[] parts = file.toString().split("\\.");
         switch (parts[1]) {
             case "html" -> output.write(("Content-Type: text/html\r\n").getBytes());
@@ -183,5 +147,21 @@ public class ServerThread extends Thread {
             default -> output.write(("Content-Type: application/octet-stream\r\n").getBytes());
         }
     }
+
+    private void write_contents (File file, OutputStream output) throws IOException {
+
+        DateFormat date_format = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z",Locale.ENGLISH);
+        String date = date_format.format(new Date());
+        String modification_date = date_format.format(file.lastModified());
+
+        output.write (("Date: " + date + "\r\n").getBytes());
+        output.write (("Server: web_server\r\n").getBytes());
+        output.write (("Content-Length: " + file.length()+"\r\n").getBytes());
+        content_type (file, output);
+        output.write (("Last-Modified:" + modification_date +"\r\n").getBytes());
+        output.write (("\r\n").getBytes());
+
+    }
+
 }
 
