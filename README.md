@@ -95,3 +95,35 @@ the following should happen:
 ### p1 - web server
 we are asked to develop a basic java web server capable of interacting with a web browser to navigate through a web site
 
+the requirements for the web server are as follows:
+- use HTTP 1.0 protocol, which implies that independent HTTP request will be ginerated for each web object
+- the server must be multithread to be able to process multipple requests in parallel
+- process GET & HEAD methods
+- process if-modified-since in a request
+
+the web server will receive and process an HTTP request and prepare & send an HTTP response
+regarding the status line of the HTTP response, the web server must implement the following codes:
+- 200 OK
+- 304 Not Modified: as reply to an if-modified-since
+- 400 Bad Request: ill-formatted HTTP request
+- 404 Not Found: the resource requested does not exist in the server
+
+regarding the header lines of the HTTP response, the web server must, at least, implement the following:
+- date: date & time when the response was created & sent
+- server: specifies web server name that attended the request
+- content-length: number of bytes of the resource sent
+- content-type: type of resource contained in the entity body
+    - text/html
+    - text/plain
+    - image/gif
+    - image/png
+    - application/octet-stream
+- last modifiied: indicates the date & time when the resource was modiified for the last time
+
+in order to correctly process a GET request with the if-modified-since header option, if the resource requested was last modified afteer the date & time specified by the option, then the resource must be sent normally, otherwise, the server must reply a status code 304 Not Modified in the HTTP header & no resource is sent
+
+the project includes the `p1-files` folder that contains utility files for the development of the web server
+
+a java application test `p1-files/httptester.jar` is provided to verify proper behaviour of the webb server
+it is executed as follows:
+``` java -jar httptester.jar <host> <port> [<0-9>] ```
