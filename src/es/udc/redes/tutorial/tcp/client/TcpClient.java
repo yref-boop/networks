@@ -15,36 +15,37 @@ public class TcpClient {
         }
         Socket socket = null;
         try {
-            // Obtains the server IP address
+            // obtain arguments
             InetAddress serverAddress = InetAddress.getByName(argv[0]);
-            // Obtains the server port
             int serverPort = Integer.parseInt(argv[1]);
-            // Obtains the message
             String message = argv[2];
-            // Creates the socket and establishes connection with the server
+
+            // create socket & establish server connection
             socket = new Socket(serverAddress, serverPort);
-            // Set a maximum timeout of 300 secs
             socket.setSoTimeout(300000);
             System.out.println("CLIENT: Connection established with "
                     + serverAddress.toString() + " port " + serverPort);
-            // Set the input channel
-            BufferedReader sInput = new BufferedReader(new InputStreamReader(
-                    socket.getInputStream()));
-            // Set the output channel
+
+            // set I/O channels
+            BufferedReader sInput = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter sOutput = new PrintWriter(socket.getOutputStream(), true);
             System.out.println("CLIENT: Sending " + message +
                     " to " + socket.getInetAddress().toString() +
                     ":" + socket.getPort());
-            // Send message to the server
+
+            // send message to server
             sOutput.println(message);
-            // Receive server response
+
+            // receive response
             String received = sInput.readLine();
             System.out.println("CLIENT: Received " + received
                     + " from " + socket.getInetAddress().toString()
                     + ":" + socket.getPort());
-            // Close streams and release connection
+
+            // close & release connection
             sOutput.close();
             sInput.close();
+
         } catch (SocketTimeoutException e) {
             System.err.println("Nothing received in 300 secs");
         } catch (Exception e) {

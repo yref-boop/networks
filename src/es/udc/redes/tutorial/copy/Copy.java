@@ -7,23 +7,25 @@ public class Copy {
 
     public static void main(String[] args) {
 
-        FileInputStream in  = null;
-        FileOutputStream out = null;
+        FileInputStream input   = null;
+        FileOutputStream output = null;
 
         try {
-            in  = new FileInputStream(args[0]);
-            out = new FileOutputStream(args[1]);
+            // initialize streams
+            input  = new FileInputStream(args[0]);
+            output = new FileOutputStream(args[1]);
 
-            int n;
-            while ((n = in.read()) != -1) out.write(n);
+            // copy until eof
+            int n; while ((n = input.read()) != -1) output.write(n);
         }
         catch (IOException exception) {
             exception.printStackTrace();
         }
         finally {
             try {
-                if (in != null) in.close();
-                if (out != null) out.close();
+                // close streams
+                if (input != null) input.close();
+                if (output != null) output.close();
             }
             catch (IOException exception) {
                 exception.printStackTrace();

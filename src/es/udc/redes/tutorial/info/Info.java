@@ -8,13 +8,13 @@ import java.io.IOException;
 
 public class Info {
 
-    public static void main(String[] args){
-
+    public static void main(String[] args) {
         try {
-
+            // read path
             Path path = Paths.get(args[0]);
             BasicFileAttributes attributes = Files.readAttributes(path, BasicFileAttributes.class);
 
+            // print obtained attributes
             System.out.println("size: " + attributes.size());
             System.out.println("last modified time: " + attributes.lastModifiedTime());
             String filename = path.getFileName().toString();

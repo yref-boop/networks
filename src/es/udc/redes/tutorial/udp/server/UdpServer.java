@@ -2,8 +2,9 @@ package es.udc.redes.tutorial.udp.server;
 
 import java.net.*;
 
-// UDP echo server implementation
-
+/**
+ * Implements a UDP echo server.
+ */
 public class UdpServer {
 
     public static void main(String argv[]) {
@@ -11,41 +12,43 @@ public class UdpServer {
             System.err.println("Format: es.udc.redes.tutorial.udp.server.UdpServer <port_number>");
             System.exit(-1);
         }
-        DatagramSocket datagram_socket = null;
+
+        DatagramSocket socket = null;
+
         try {
-            // Create a server socket
-            datagram_socket = new DatagramSocket(5000);
 
-            // 300s timeout
-            datagram_socket.setSoTimeout(300000);
+            // create a server socket
+            socket = new DatagramSocket(5000);
 
-            byte[] receiveData = new byte[1024];
-            byte[] sendData;
+            // set timeout and data
+            socket.setSoTimeout(300000);
+            byte[] in_data = new byte[1024];
+            byte[] out_data;
 
             while (true) {
-                // Prepare datagram for reception
-                DatagramPacket datagram_in = new DatagramPacket (receiveData, receiveData.length);
-                // Receive the message
-                datagram_socket.receive (datagram_in);
+                // prepare datagram for reception
+                DatagramPacket in_datagram = new DatagramPacket(in_data, in_data.length);
+
+                // receive the message
+                socket.receive(in_datagram);
                 System.out.println ("SERVER: recieved "
-                    + new String (datagram_in.getData(), 0, datagram_in.getLength())
-                    + "from " + datagram_in.getAddress().toString() + ":"
-                    + datagram_in.getPort());
+                    + new String (in_datagram.getData(), 0, in_datagram.getLength())
+                    + " from " + in_datagram.getAddress().toString() + ":"
+                    + in_datagram.getPort());
+                // prepare datagram to send response
+                String sentence = new String (in_datagram.getData());
+                InetAddress address = in_datagram.getAddress();
+                int port = in_datagram.getPort();
+                out_data = sentence.getBytes();
 
-                // Prepare datagram to send response
-                String sentence = new String (datagram_in.getData());
-                InetAddress IPAddress = datagram_in.getAddress();
-                int port = datagram_in.getPort();
-                sendData = sentence.getBytes();
-
-                // Send response
-                DatagramPacket datagram_out = new DatagramPacket (sendData, sendData.length, IPAddress, port);
-                datagram_socket.send(datagram_out);
+                // send response
+                DatagramPacket out_datagram = new DatagramPacket (out_data, out_data.length, address, port);
+                socket.send(out_datagram);
 
                 System.out.println ("SERVER: sending "
-                    + new String (datagram_in.getData(), 0, datagram_in.getLength())
-                    + " to " + datagram_in.getAddress().toString() + ":"
-                    + datagram_in.getPort());
+                    + new String (out_datagram.getData(), 0, out_datagram.getLength())
+                    + " to " + out_datagram.getAddress().toString() + ":"
+                    + out_datagram.getPort());
             }
 
         } catch (SocketTimeoutException e) {
@@ -54,9 +57,9 @@ public class UdpServer {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
         } finally {
-        // close the socket
+        // close socket
             try {
-                datagram_socket.close();
+                socket.close();
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }

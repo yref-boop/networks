@@ -6,11 +6,12 @@ import java.io.*;
 
 public class ServerThread extends Thread {
 
-    private Socket socket;
+  private Socket socket;
 
-    public ServerThread(Socket s) {
-        this.socket = s;
-    }
+  // store socket
+  public ServerThread(Socket s) {
+      this.socket = s;
+  }
 
     @Override
     public void run() {

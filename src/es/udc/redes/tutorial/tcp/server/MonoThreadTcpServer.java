@@ -14,48 +14,57 @@ public class MonoThreadTcpServer {
             System.exit(-1);
         }
 
-        int port = Integer.parseInt(argv[0]);
-        ServerSocket serverSocket = null;
+        ServerSocket server_socket = null;
+        Socket client_socket = null;
 
         try {
-            // Create a server socket
-            serverSocket = new ServerSocket(port);
-            // Set a timeout of 300 secs
-            serverSocket.setSoTimeout(300000);
+
+            // create server socket
+            int port = Integer.parseInt(argv[0]);
+            server_socket = new ServerSocket(port);
+            server_socket.setSoTimeout(300000);
+
             while (true) {
-                // Wait for connections
-                Socket socket = serverSocket.accept();
-                // Set the input channel
-                InputStream input = socket.getInputStream();
-                // Set the output channel
-                OutputStream output = socket.getOutputStream();
-                // Receive the client message
+                // wait for connections
+                client_socket = server_socket.accept();
+
+                // set I/O channels
+                InputStream input = client_socket.getInputStream();
+                OutputStream output = client_socket.getOutputStream();
+
+                // receive client message
                 BufferedReader reader = new BufferedReader (new InputStreamReader (input));
                 String line = reader.readLine();
                 System.out.println("SERVER: Received " + line
-                    + " from " + socket.getInetAddress().toString()
-                    + ":" + socket.getPort());
-                // Send response to the client
+                    + " from " + client_socket.getInetAddress().toString()
+                    + ":" + client_socket.getPort());
+
+                // send response
                 PrintWriter writer = new PrintWriter (output, true);
                 writer.println(line);
                 System.out.println("SERVER: Sending " + line +
-                " to " + socket.getInetAddress().toString() +
-                ":" + socket.getPort());
-                // Close the streams
-                socket.close();
+                " to " + client_socket.getInetAddress().toString() +
+                ":" + client_socket.getPort());
+
+                // close the streams
+                input.close();
+                output.close();
             }
-        // Uncomment next catch clause after implementing the logic            
         } catch (SocketTimeoutException e) {
             System.err.println("Nothing received in 300 secs ");
-        } catch (Exception e) {
+          } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
         } finally {
-	        //Close the socket
+            // close the socket
             try {
-                serverSocket.close();
-            }
-            catch (IOException e) {
+                if (server_socket != null) {
+                    server_socket.close();
+                }
+                if (client_socket != null){
+                    client_socket.close();
+                }
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

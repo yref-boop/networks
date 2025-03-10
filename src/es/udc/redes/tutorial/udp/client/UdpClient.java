@@ -14,31 +14,29 @@ public class UdpClient {
         }
         DatagramSocket sDatagram = null;
         try {
-            
-            // Create a non connection-oriented socket
-            // (use any available port)
+            // create a non connection-oriented socket (use any available port)
             sDatagram = new DatagramSocket();
-            // Set timeout to 300 secs
+
             sDatagram.setSoTimeout(300000);
-            // Obtain server IP address from first argument
+
+            // obtain arguments
             InetAddress serverAddress = InetAddress.getByName(argv[0]);
-            // Obtain server port from second argument
             int serverPort = Integer.parseInt(argv[1]);
-            // Obtain message from third argument
             String message = argv[2];
-            // Prepare the datagram
+
+            // prepare datagram
             DatagramPacket dgramSent = new DatagramPacket(message.getBytes(),
                     message.getBytes().length, serverAddress, serverPort);
-            // Send the datagram
+            // send datagram
             sDatagram.send(dgramSent);
             System.out.println("CLIENT: Sending "
                     + new String(dgramSent.getData()) + " to "
                     + dgramSent.getAddress().toString() + ":"
                     + dgramSent.getPort());
-            // Prepare datagram for data reception
+            // prepare datagram for data reception
             byte array[] = new byte[1024];
             DatagramPacket dgramRec = new DatagramPacket(array, array.length);
-            // Receive the message
+            // receive message
             sDatagram.receive(dgramRec);
             System.out.println("CLIENT: Received "
                     + new String(dgramRec.getData(), 0, dgramRec.getLength())
@@ -49,7 +47,7 @@ public class UdpClient {
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
         } finally {
-            // Close socket to release connection
+            // close socket
             sDatagram.close();
         }
     }
