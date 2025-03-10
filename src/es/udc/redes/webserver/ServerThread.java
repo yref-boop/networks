@@ -9,7 +9,7 @@ public class ServerThread extends Thread {
 
     private Socket socket;
 
-    public ServerThread(Socket socket) {this.socket = socket;}
+    public ServerThread(Socket socket) { this.socket = socket; }
 
     public void run() {
         try {
@@ -141,12 +141,17 @@ public class ServerThread extends Thread {
     public void content_type(File file,OutputStream output) throws IOException {
 
         String[] parts = file.toString().split("\\.");
+        System.out.println(parts[1]);
         switch (parts[1]) {
-            case "html" -> output.write(("Content-Type: text/html\r\n").getBytes());
-            case "txt" -> output.write(("Content-Type: text/plain\r\n").getBytes());
-            case "gif" -> output.write(("Content-Type: image/gif\r\n").getBytes());
-            case "png" -> output.write(("Content-Type: image/png\r\n").getBytes());
-            default -> output.write(("Content-Type: application/octet-stream\r\n").getBytes());
+            case "html" : output.write(("Content-Type: text/html\r\n").getBytes());
+                break;
+            case "txt" : output.write(("Content-Type: text/plain\r\n").getBytes());
+                break;
+            case "gif" : output.write(("Content-Type: image/gif\r\n").getBytes());
+                break;
+            case "png" : output.write(("Content-Type: image/png\r\n").getBytes());
+                break;
+            default : output.write(("Content-Type: application/octet-stream\r\n").getBytes());
         }
     }
 
